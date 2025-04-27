@@ -485,23 +485,30 @@ public:
                 char another;
                 do
                 {
-                    cout << "\nEnter the ID of the product to add to cart: ";
-                    getline(cin, id);
+                    try
+                    {
+                        cout << "\nEnter the ID of the product to add to cart: ";
+                        getline(cin, id);
 
-                    for (char &c : id)
-                    {
-                        c = toupper(c);
-                    }
+                        for (char &c : id)
+                        {
+                            c = toupper(c);
+                        }
 
-                    Product *p = findProductById(id);
-                    if (p)
-                    {
-                        cart.addProduct(*p);
-                        cout << "\nProduct added successfully!" << endl;
+                        Product *p = findProductById(id);
+                        if (p)
+                        {
+                            cart.addProduct(*p);
+                            cout << "\nProduct added successfully!" << endl;
+                        }
+                        else
+                        {
+                            throw invalid_argument("Product not found!");
+                        }
                     }
-                    else
+                    catch (const invalid_argument &e)
                     {
-                        cout << "\nProduct not found!" << endl;
+                        cout << "\nError: " << e.what() << endl;
                     }
 
                     another = getAnotherChoice();
