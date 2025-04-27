@@ -157,6 +157,7 @@ private:
     static OrderManager *instance;
     Order orders[20];
     int orderCount;
+    int lastOrderId;
 
     OrderManager() : orderCount(0) {}
 
@@ -166,6 +167,39 @@ public:
         if (!instance)
             instance = new OrderManager();
         return instance;
+    }
+
+    void loadLastOrderId()
+    {
+        fstream infile;
+        infile.open("order_id.txt", ios::in);
+        if (infile.is_open())
+        {
+            infile >> lastOrderId;
+            infile.close();
+            return;
+        }
+
+        lastOrderId = 0; // if file doesn't exist
+    }
+
+    void saveLastOrderId()
+    {
+        fstream outfile;
+        outfile.open("order_id.txt", ios::out);
+        if (outfile.is_open())
+        {
+            outfile << lastOrderId;
+            outfile.close();
+        }
+    }
+
+    int getNextOrderId()
+    {
+        loadLastOrderId();
+        lastOrderId++;
+        saveLastOrderId();
+        return lastOrderId;
     }
 
     void addOrder(Order order)
@@ -210,10 +244,9 @@ class ShoppingCart
 private:
     CartItem items[20];
     int itemCount;
-    int ordercount;
 
 public:
-    ShoppingCart() : itemCount(0), ordercount(0) {}
+    ShoppingCart() : itemCount(0) {}
 
     void addProduct(Product product)
     {
@@ -318,7 +351,7 @@ public:
         paymentContext.setStrategy(strategy);
         string paymentMethod = paymentContext.pay(totalAmount);
 
-        Order newOrder(++ordercount);
+        Order newOrder(OrderManager::getInstance()->getNextOrderId());
         for (int i = 0; i < itemCount; i++)
         {
             newOrder.addItem(items[i]);
@@ -359,7 +392,8 @@ public:
 
     void viewProducts()
     {
-        cout << "\n" << left << setw(20) << "Product ID"
+        cout << "\n"
+             << left << setw(20) << "Product ID"
              << setw(20) << "Name"
              << setw(20) << "Price" << "\n"
              << "=============================================\n";

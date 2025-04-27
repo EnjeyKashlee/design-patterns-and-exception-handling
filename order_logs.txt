@@ -1,0 +1,4 @@
+Order ID: 1 has been successfully checked out and paid using Cash.
+Order ID: 2 has been successfully checked out and paid using Credit/Debit Card.
+Order ID: 3 has been successfully checked out and paid using Credit/Debit Card.
+Order ID: 4 has been successfully checked out and paid using GCash.
